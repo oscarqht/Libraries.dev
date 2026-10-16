@@ -67,3 +67,5 @@ sites/home/vite.local.mjs
 # Root Package.swift (the SwiftUI ports from GitHub): SwiftPM / Xcode output
 /.build/
 /.swiftpm/
+.worktrees
+.raft
