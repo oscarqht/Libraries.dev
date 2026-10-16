@@ -1,5 +1,6 @@
 import { StrictMode, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { useSiteTheme } from "./useSiteTheme";
 import { CodeBlock } from "./examples/CodeCopy";
 import { StudioTeaser } from "./examples/StudioTeaser";
 import {
@@ -93,6 +94,7 @@ function Slider({
 }
 
 function ImagePlayground() {
+  const theme = useSiteTheme();
   const [preset, setPreset] = useState<ImageGenerationPreset>("pixels-organic");
   const [strength, setStrength] = useState(100);
   // Starts paused so the page loads quietly (same as the live demo playground).
@@ -124,18 +126,18 @@ function ImagePlayground() {
           images at the card sizes it was drawn for, before any knobs. */}
       <div className="detail-examples">
         <div className="example-row-full">
-          <ImageGeneration preset="pixels-organic" theme="dark" cardBg="#1B1B1B" images={IMAGE_POOL} autoReveal>
+          <ImageGeneration preset="pixels-organic" theme={theme} cardBg={theme === "dark" ? "#1B1B1B" : undefined} images={IMAGE_POOL} autoReveal>
             <div className="ex-image-card" />
           </ImageGeneration>
         </div>
         <div className="example-row-split">
           <div className="example-cell">
-            <ImageGeneration preset="pixels-mechanic" theme="dark" cardBg="#1B1B1B" images={IMAGE_POOL} autoReveal>
+            <ImageGeneration preset="pixels-mechanic" theme={theme} cardBg={theme === "dark" ? "#1B1B1B" : undefined} images={IMAGE_POOL} autoReveal>
               <div className="ex-image-card ex-image-card--sm" />
             </ImageGeneration>
           </div>
           <div className="example-cell">
-            <ImageGeneration preset="sweep-gradient" theme="dark" cardBg="#1B1B1B" images={IMAGE_POOL} autoReveal>
+            <ImageGeneration preset="sweep-gradient" theme={theme} cardBg={theme === "dark" ? "#1B1B1B" : undefined} images={IMAGE_POOL} autoReveal>
               <div className="ex-image-card ex-image-card--sm" />
             </ImageGeneration>
           </div>
@@ -149,8 +151,8 @@ function ImagePlayground() {
         <ImageGeneration
           ref={handleRef}
           preset={preset}
-          theme="dark"
-          cardBg="#1B1B1B"
+          theme={theme}
+          cardBg={theme === "dark" ? "#1B1B1B" : undefined}
           strength={strength / 100}
           images={IMAGE_POOL}
           paused={paused}

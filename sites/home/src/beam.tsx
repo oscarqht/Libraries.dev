@@ -1,5 +1,6 @@
 import { StrictMode, useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { createRoot } from "react-dom/client";
+import { useSiteTheme } from "./useSiteTheme";
 import { BorderBeam, type BorderBeamSize, type BorderBeamColorVariant } from "border-beam";
 import {
   MockChatInput,
@@ -91,6 +92,7 @@ function DemoCard() {
 }
 
 function BeamPlayground() {
+  const theme = useSiteTheme();
   const [family, setFamily] = useState<BeamFamily>("rotate");
   const [size, setSize] = useState<BorderBeamSize>("md");
   const [colorVariant, setColorVariant] = useState<BorderBeamColorVariant>("colorful");
@@ -122,13 +124,13 @@ function BeamPlayground() {
           setting, not for meeting the library. */}
       <div className="detail-examples">
         <div className="example-row-full">
-          <BorderBeam className="beam-host" size="md" colorVariant="colorful" theme="dark">
+          <BorderBeam className="beam-host" size="md" colorVariant="colorful" theme={theme}>
             <MockChatInput />
           </BorderBeam>
         </div>
         <div className="example-row-split">
           <div className="example-cell">
-            <BorderBeam className="beam-host" size="sm" colorVariant="colorful" theme="dark">
+            <BorderBeam className="beam-host" size="sm" colorVariant="colorful" theme={theme}>
               <MockIconButton />
             </BorderBeam>
           </div>
@@ -137,7 +139,7 @@ function BeamPlayground() {
               className="beam-host"
               size="line"
               colorVariant="colorful"
-              theme="dark"
+              theme={theme}
               duration={3.1}
               borderRadius={20}
             >
@@ -154,7 +156,7 @@ function BeamPlayground() {
           <BorderBeam
             size={size}
             colorVariant={colorVariant}
-            theme="dark"
+            theme={theme}
             active={active}
             style={isPulseOutside ? PULSE_OUTSIDE_TUNED_VARS : undefined}
           >

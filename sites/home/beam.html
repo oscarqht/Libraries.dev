@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <!-- Theme. A stored choice (the Appearance item in the More menu) wins,
+       otherwise the OS setting. Runs before anything paints, so a page never
+       flashes the other theme. site.js keeps it in sync afterwards. -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <!-- First-paint guard. Firefox has painted a frame before the stylesheets
@@ -18,9 +31,10 @@
        regardless, so a failed sheet can never leave the page blank. -->
   <style>
     html { background: #121212; }
+    html[data-theme="light"] { background: #fdfdfd; }
     html:not(.css-ready) body { visibility: hidden; }
   </style>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="dark light" />
 
   <title>Border Beam: animated glowing border for React | Libraries.dev</title>
   <meta
@@ -122,6 +136,9 @@
     .beam-card-line { height: 8px; border-radius: 4px; background: rgba(238, 238, 239, 0.08); }
     .beam-card-line--title { height: 10px; width: 55%; background: rgba(238, 238, 239, 0.14); }
     .beam-card-line--short { width: 78%; }
+    html[data-theme="light"] .beam-card { background: #ffffff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06); }
+    html[data-theme="light"] .beam-card-line { background: rgba(0, 0, 0, 0.05); }
+    html[data-theme="light"] .beam-card-line--title { background: rgba(0, 0, 0, 0.1); }
   </style>
   <script type="application/ld+json">
 {

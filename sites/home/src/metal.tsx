@@ -5,6 +5,7 @@ import { MetalExamples } from "./examples/metal-examples";
 import { MetalExamplesV2, useMetalCursorSprite } from "./examples/metal-examples-v2";
 import { StudioTeaser } from "./examples/StudioTeaser";
 import { PgTabs } from "./examples/PgTabs";
+import { useSiteTheme } from "./useSiteTheme";
 import { MetalFx as MetalFxV1, type MetalFxPreset, type MetalFxVariant } from "metal-fx-v1";
 import { MetalFx, MetalText, setCursorLightConfig, useMetalBend, useMetalTextReflection } from "metal-fx";
 
@@ -137,6 +138,7 @@ function StageV2({
 }
 
 function TextStageV2({ disableReflection }: { disableReflection: boolean }) {
+  const theme = useSiteTheme();
   const strength = STRENGTH / 100;
   const planRef = useRef<HTMLSpanElement>(null);
   useMetalTextReflection(planRef);
@@ -147,9 +149,9 @@ function TextStageV2({ disableReflection }: { disableReflection: boolean }) {
         <span ref={planRef} className="mx-plan">Plan</span>
         <MetalText
           font="500 24px/1.2 Inter, sans-serif"
-          color="#E2E2E2"
+          color={theme === "dark" ? "#E2E2E2" : "#5c5c5c"}
           strength={strength}
-          theme="dark"
+          theme={theme}
           reflectionTargets={disableReflection ? undefined : planTargets}
           glow={false}
         >
@@ -163,6 +165,7 @@ function TextStageV2({ disableReflection }: { disableReflection: boolean }) {
 function CircleStageV2({
   paused, disableGlow, disableReflection,
 }: { paused: boolean; disableGlow: boolean; disableReflection: boolean }) {
+  const theme = useSiteTheme();
   const strength = STRENGTH / 100;
   const searchRef = useRef<HTMLLabelElement>(null);
   const sendRef = useRef<HTMLDivElement>(null);
@@ -178,7 +181,7 @@ function CircleStageV2({
         ref={sendRef}
         preset="chromatic"
         variant="circle"
-        theme="dark"
+        theme={theme}
         strength={strength * 0.9}
         paused={paused}
         disableGlow={disableGlow}
@@ -198,6 +201,7 @@ function CircleStageV2({
 function StageV1({
   variant, paused, disableGlow, disableReflection, playPauseRef,
 }: { variant: MetalFxVariant; paused: boolean; disableGlow: boolean; disableReflection: boolean; playPauseRef: RefObject<HTMLButtonElement> }) {
+  const theme = useSiteTheme();
   const searchRef = useRef<HTMLLabelElement>(null);
   const reflectionTargets = disableReflection ? undefined : [searchRef, playPauseRef];
   return (
@@ -211,7 +215,7 @@ function StageV1({
         key={variant}
         preset={PRESET}
         variant={variant}
-        theme="dark"
+        theme={theme}
         strength={STRENGTH / 100}
         paused={paused}
         disableGlow={disableGlow}

@@ -1,7 +1,9 @@
 /* Detail-page examples — the real UI each library's own demo page shows,
    sitting above the mini playground. Ported from those pages so the two
-   stay the same thing; the light-theme rules are dropped, since this site
-   is dark-only.
+   stay the same thing. The base rules are the dark design; the light
+   theme overrides them in the "Light theme" block at the end of this
+   file (scoped to .detail-examples where the class is shared with the
+   Studio, whose own light theme is styled separately).
 
    The mock chrome reads these tokens; without them every fill, border and
    label resolved to nothing and the mocks rendered as empty boxes. Values
@@ -21,10 +23,15 @@
   --c-mock-text-strong: #ffffff;
   --shimmer-band: 400%;
   /* The orb demo site's own shimmer ink (sites/orbs/styles.css), so a
-     label reads the same here as on the page these pills come from. */
-  --shimmer-base: rgba(251, 251, 251, 0.5);
+     label reads the same here as on the page these pills come from:
+     light here, dark in the block below. */
+  --shimmer-base: rgba(7, 7, 7, 0.45);
   --shimmer-dur: 2000ms;
   --shimmer-ease: linear;
+  --shimmer-highlight: #0d0d0d;
+}
+html[data-theme="dark"] {
+  --shimmer-base: rgba(251, 251, 251, 0.5);
   --shimmer-highlight: #ffffff;
 }
 
@@ -966,7 +973,8 @@
 /* The chat input mock's tokens are dark-only (the beam demo page ships
    dark); the Studio's light theme flips them here so the beam is judged
    on a white card. */
-html[data-theme="light"] .mock-chat {
+html[data-theme="light"] .mock-chat,
+html[data-theme="light"] .detail-examples {
   --c-mock-bg: #ffffff;
   --c-mock-border: rgba(0, 0, 0, 0.08);
   --c-mock-chip-bg: rgba(0, 0, 0, 0.04);
@@ -1465,8 +1473,9 @@ html[data-demo-names="off"] .ex-avatars-name { display: none; }
 .mock-bots-status.t-shimmer {
   display: inline-block;
   --shimmer-base: var(--text-muted);
-  --shimmer-highlight: #f5f5f5;
+  --shimmer-highlight: #0d0d0d;
 }
+html[data-theme="dark"] .mock-bots-status.t-shimmer { --shimmer-highlight: #f5f5f5; }
 
 /* The thread: a question and the bot's answer. */
 .mock-thread {
@@ -1496,3 +1505,90 @@ html[data-demo-names="off"] .ex-avatars-name { display: none; }
 .mock-thread-live { position: absolute; inset: 1px 0 0; display: flex; align-items: flex-start; }
 .mock-thread-body .t-shimmer { font-size: 13px; line-height: 18px; }
 .mock-thread-reply { margin: 0; font-size: 13px; line-height: 18px; color: var(--c-mock-text); }
+
+/* ── Light theme: the detail pages' example stages ─────────────────
+   Same design as dark, in light: light-grey stages (the playground's
+   --stage-bg), white mock cards on a hairline ring with the site's soft
+   drop, dark ink. The mock tokens flip with the .mock-chat block above. */
+html[data-theme="light"] .detail-playground-label { color: var(--text); }
+
+html[data-theme="light"] .detail-examples .example-row-full,
+html[data-theme="light"] .detail-examples .example-cell,
+html[data-theme="light"] .detail-examples .ex-orb-cell {
+  background: var(--stage-bg);
+}
+html[data-theme="light"] .detail-examples {
+  --mk-card-ring: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  --mk-card-drop: 0 2px 6px 0 rgba(0, 0, 0, 0.03), 0 4px 42px 0 rgba(0, 0, 0, 0.04);
+  --mk-chip:
+    0 1px 3px 0 rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Beam: the beam root clips its children, so the card's drop sits on it. */
+html[data-theme="light"] .detail-examples .beam-host { box-shadow: var(--mk-card-drop); }
+html[data-theme="light"] .detail-examples .mock-chat .pill,
+html[data-theme="light"] .detail-examples .mock-chat .tag,
+html[data-theme="light"] .detail-examples .mock-chat .send-btn {
+  background: #ffffff;
+  box-shadow: var(--mk-chip);
+}
+html[data-theme="light"] .detail-examples .mock-chat .tag { color: #555555; }
+
+/* Orbs: white pills and chips (the orb demo page's light pill). */
+html[data-theme="light"] .detail-examples .ex-pill,
+html[data-theme="light"] .detail-examples .ex-chip {
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  color: #121212;
+}
+html[data-theme="light"] .detail-examples .ex-chip { color: #3a3a3a; }
+
+/* Bots: the working status sweeps a dark band over the muted grey. */
+html[data-theme="light"] .detail-examples .mock-bots { box-shadow: var(--mk-card-ring), var(--mk-card-drop); }
+
+/* Voice: the chat card's drop on the glow root, as on the playground. */
+html[data-theme="light"] .detail-examples [data-voice-type="default"] { box-shadow: var(--mk-card-drop); }
+
+/* Gooey: tracks and chips in black tints on the white liquid. */
+html[data-theme="light"] .detail-examples .sl-track {
+  background: rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+html[data-theme="light"] .detail-examples .dgc-chip {
+  background: rgba(0, 0, 0, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+html[data-theme="light"] .detail-examples .pm-open .pm-sat:hover { background: rgba(0, 0, 0, 0.04); }
+html[data-theme="light"] .detail-examples .pm-btn:focus-visible,
+html[data-theme="light"] .detail-examples .sl-thumb:focus-visible { outline-color: #0d0d0d; }
+
+/* Metal: the composer and toolbar cards, chips and controls in white. */
+html[data-theme="light"] .detail-examples .mx-chat,
+html[data-theme="light"] .detail-examples .mx-toolbar-backdrop {
+  background: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--mk-card-ring), var(--mk-card-drop);
+}
+html[data-theme="light"] .detail-examples .mx-chat-input::placeholder { color: rgba(78, 78, 78, 0.5); }
+html[data-theme="light"] .detail-examples .mx-plus,
+html[data-theme="light"] .detail-examples .mx-chip {
+  background: #ffffff;
+  box-shadow: var(--mk-chip);
+  color: #3f434a;
+}
+html[data-theme="light"] .detail-examples .mx-circle,
+html[data-theme="light"] .detail-examples .mx-dots,
+html[data-theme="light"] .detail-examples .mx-search,
+html[data-theme="light"] .detail-examples .mx-pill,
+html[data-theme="light"] .detail-examples .ex-metal-pill,
+html[data-theme="light"] .detail-examples .ex-metal-circle {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  color: #1d1d1d;
+}
+html[data-theme="light"] .detail-examples .mx-search svg { stroke: #6c6c6c; }
+html[data-theme="light"] .detail-examples .mx-plan { color: rgba(13, 13, 13, 0.45); }
+html[data-theme="light"] .detail-examples .mx-live { color: #6c6c6c; }

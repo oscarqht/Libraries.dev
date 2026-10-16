@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <!-- Theme. A stored choice (the Appearance item in the More menu) wins,
+       otherwise the OS setting. Runs before anything paints, so a page never
+       flashes the other theme. site.js keeps it in sync afterwards. -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <!-- First-paint guard. Firefox has painted a frame before the stylesheets
@@ -24,10 +37,11 @@
        regardless, so a failed sheet can never leave the page blank. -->
   <style>
     html { background: #121212; }
+    html[data-theme="light"] { background: #fdfdfd; }
     html:not(.css-ready) body { visibility: hidden; }
   </style>
   <script>document.documentElement.classList.add("css-ready");</script>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="dark light" />
 
   <title>Libraries Pro: Unlock the Studio for every library</title>
   <meta name="description" content="Libraries Pro unlocks all seven UI effect libraries: the Studio with a built-in agent for deep customization, the Pro skill for your coding agent, plus Pro variants and every future update." />
@@ -4554,6 +4568,11 @@
     .pro-quote {
       display: flex; flex-direction: column; gap: 24px; min-width: 0;
       min-height: 240px; padding: 32px; border-radius: 24px;
+      /* Light: a white card on the page's hairline + soft drop. */
+      background-color: var(--card-bg, #ffffff);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+    }
+    html[data-theme="dark"] .pro-quote {
       background-color: #1a1a1a;
       box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.02), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
     }
@@ -4585,9 +4604,10 @@
       flex: 1 1 auto;
       font-size: 16px;
       line-height: 24.2px;
-      color: #c9c9c9;
+      color: #3f3f3f;
       overflow-wrap: anywhere;
     }
+    html[data-theme="dark"] .pro-quote-text { color: #c9c9c9; }
     .pro-quote-author { display: flex; align-items: center; gap: 11px; min-width: 0; }
     /* Avatar links to the same X profile as the name. It's skipped in the
        tab order (tabindex="-1") because the adjacent name link already
@@ -4610,7 +4630,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.05);
       color: var(--text-muted);
       font-size: 13px;
       font-weight: 500;
@@ -4618,6 +4638,7 @@
     }
     /* Real photo when one is installed; the initial stays underneath as the
        fallback, and a missing file drops the img so the initial shows. */
+    html[data-theme="dark"] .pro-quote-avatar { background: rgba(255, 255, 255, 0.06); }
     .pro-quote-avatar { position: relative; }
     .pro-quote-avatar-img {
       position: absolute; inset: 0; width: 100%; height: 100%;
@@ -4631,9 +4652,10 @@
       font-size: 13px;
       line-height: 16px;
       font-weight: 500;
-      color: #ededed;
+      color: #0d0d0d;
       text-decoration: none;
     }
+    html[data-theme="dark"] .pro-quote-name { color: #ededed; }
     /* A name in a byline is not a link inside a sentence: no underline at
        rest, so it does not compete with the quote. It still appears on
        hover, so the ones that link out stay discoverable. */
@@ -4713,6 +4735,12 @@
       mix-blend-mode: lighten;
     }
     .pro-studio-shot img { mix-blend-mode: lighten; }
+    /* Light: the shot is a dark-UI capture, so there is no darker-than-card
+       fill to drop; show it as a dark device frame instead (no blend), still
+       fading out towards the bottom. */
+    html:not([data-theme="dark"]) .pro-studio-shot-box,
+    html:not([data-theme="dark"]) .pro-studio-shot img { mix-blend-mode: normal; }
+    html:not([data-theme="dark"]) .pro-studio-shot { border-radius: 14px; overflow: hidden; }
 
     /* Pro skill — SKILL.md code snippet */
     .pro-bento-code {

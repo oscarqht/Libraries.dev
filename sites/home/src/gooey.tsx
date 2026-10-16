@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { useSiteTheme } from "./useSiteTheme";
 import {
   GooeyStudio,
   MorphDemo,
@@ -17,24 +18,25 @@ import {
    — the deeper tuning stays in the Studio. */
 
 function GooeyPage(): JSX.Element {
+  const theme = useSiteTheme();
   return (
     <>
       <div className="detail-examples">
         <div className="example-row-full">
-          <MorphDemo group={D.group} knobs={D.morph} />
+          <MorphDemo group={D.group} knobs={D.morph} theme={theme} />
         </div>
         <div className="example-row-split">
           <div className="example-cell">
-            <MoveDemo group={D.group} knobs={D.move} />
+            <MoveDemo group={D.group} knobs={D.move} theme={theme} />
           </div>
           <div className="example-cell">
-            <BendDemo group={D.group} knobs={D.bend} />
+            <BendDemo group={D.group} knobs={D.bend} theme={theme} />
           </div>
         </div>
       </div>
 
       <p className="detail-playground-label">Playground</p>
-      <GooeyStudio variant="public" />
+      <GooeyStudio variant="public" theme={theme} />
     </>
   );
 }
