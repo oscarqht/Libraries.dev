@@ -1,6 +1,6 @@
 /* Libraries.dev — shared nav behaviors (mobile menu, 3-dot menu,
- * ⌘K palette, GitHub stars). Ported from transitions.dev inline
- * scripts; theme handling removed (site is dark-only). */
+ * ⌘K palette, GitHub stars, theme). Ported from transitions.dev inline
+ * scripts. */
 (function () {
   "use strict";
 
@@ -217,6 +217,150 @@
     });
     window.addEventListener("resize", function () { if (menuIsOpen()) syncSlideHeight(); });
   }
+
+  /* ── Theme ───────────────────────────────────────────────── */
+  // The inline script in each page's <head> sets data-theme before first
+  // paint; this keeps it in sync. The choice is "system", "light" or
+  // "dark"; only the last two are stored. Widgets that read data-theme
+  // (theme="auto") follow it through a MutationObserver, and anything else
+  // can listen for "themechange" on the document.
+  var THEME_KEY = "theme";
+  var THEME_BG = { light: "#fdfdfd", dark: "#121212" };
+  var THEME_LABEL = { system: "System", light: "Light", dark: "Dark" };
+  var systemLight = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+
+  function themeChoice() {
+    var t = null;
+    try { t = localStorage.getItem(THEME_KEY); } catch (e) {}
+    return t === "light" || t === "dark" ? t : "system";
+  }
+  function resolveTheme(choice) {
+    if (choice === "light" || choice === "dark") return choice;
+    return systemLight && systemLight.matches ? "light" : "dark";
+  }
+  function applyTheme() {
+    var choice = themeChoice();
+    var theme = resolveTheme(choice);
+    var root = document.documentElement;
+    if (root.getAttribute("data-theme") !== theme) {
+      // Swap without every hover/colour transition on the page firing at once.
+      root.classList.add("theme-switching");
+      root.setAttribute("data-theme", theme);
+      void root.offsetWidth;
+      requestAnimationFrame(function () { root.classList.remove("theme-switching"); });
+      document.dispatchEvent(new CustomEvent("themechange", { detail: { theme: theme, choice: choice } }));
+    }
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", THEME_BG[theme]);
+    syncThemeControls(choice);
+  }
+  function setThemeChoice(choice) {
+    try {
+      if (choice === "system") localStorage.removeItem(THEME_KEY);
+      else localStorage.setItem(THEME_KEY, choice);
+    } catch (e) {}
+    applyTheme();
+  }
+  if (systemLight) {
+    var onSystem = function () { if (themeChoice() === "system") applyTheme(); };
+    if (systemLight.addEventListener) systemLight.addEventListener("change", onSystem);
+    else if (systemLight.addListener) systemLight.addListener(onSystem);
+  }
+  // Another tab changed it.
+  window.addEventListener("storage", function (e) { if (e.key === THEME_KEY) applyTheme(); });
+
+  var CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var CHEVR_SVG = fbItem ? (fbItem.querySelector(".tl-menu-chevr") || {}).innerHTML || "" : "";
+  var BACK_SVG = fbBack ? (fbBack.querySelector(".tl-set-back-ic") || {}).innerHTML || "" : "";
+  var themeValueEl = null;
+  var themeOptionEls = [];
+  var mobileThemeBtns = [];
+
+  function syncThemeControls(choice) {
+    if (themeValueEl) themeValueEl.textContent = THEME_LABEL[choice];
+    themeOptionEls.forEach(function (el) {
+      el.setAttribute("aria-checked", String(el.getAttribute("data-theme-choice") === choice));
+    });
+    mobileThemeBtns.forEach(function (el) {
+      el.setAttribute("aria-pressed", String(el.getAttribute("data-theme-choice") === choice));
+    });
+  }
+
+  // ⋮ menu: an Appearance item on page 1 opens page 3, the three choices.
+  var page1 = pmSlide && pmSlide.querySelector('.t-page[data-page-id="1"]');
+  if (page1) {
+    var appItem = document.createElement("div");
+    appItem.className = "tl-menu-item";
+    appItem.id = "pm-appearance";
+    appItem.setAttribute("role", "menuitem");
+    appItem.tabIndex = 0;
+    appItem.innerHTML = '<span class="tl-menu-item-label">Appearance</span>' +
+      '<span class="tl-menu-trail"><span class="tl-menu-value"></span>' +
+      '<span class="tl-menu-chevr" aria-hidden="true">' + CHEVR_SVG + "</span></span>";
+    themeValueEl = appItem.querySelector(".tl-menu-value");
+    page1.insertBefore(appItem, fbItem && fbItem.parentNode === page1 ? fbItem : null);
+
+    var page3 = document.createElement("div");
+    page3.className = "t-page";
+    page3.setAttribute("data-page-id", "3");
+    page3.innerHTML = '<button type="button" class="tl-set-back" id="pm-theme-back">' +
+      '<span class="tl-set-back-ic" aria-hidden="true">' + BACK_SVG + "</span>" +
+      '<span class="tl-set-back-title">Appearance</span></button>' +
+      '<div class="tl-menu-divider"></div>';
+    ["system", "light", "dark"].forEach(function (choice) {
+      var opt = document.createElement("div");
+      opt.className = "tl-menu-item";
+      opt.setAttribute("role", "menuitemradio");
+      opt.setAttribute("data-theme-choice", choice);
+      opt.tabIndex = 0;
+      opt.innerHTML = '<span class="tl-menu-item-label">' + THEME_LABEL[choice] + "</span>" +
+        '<span class="tl-menu-check" aria-hidden="true">' + CHECK_SVG + "</span>";
+      var pick = function (e) { e.preventDefault(); setThemeChoice(choice); };
+      opt.addEventListener("click", pick);
+      opt.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") pick(e); });
+      themeOptionEls.push(opt);
+      page3.appendChild(opt);
+    });
+    pmSlide.appendChild(page3);
+
+    var openAppearance = function (e) {
+      e.preventDefault();
+      setView("3");
+      var current = page3.querySelector('[aria-checked="true"]');
+      if (current) current.focus({ preventScroll: true });
+    };
+    appItem.addEventListener("click", openAppearance);
+    appItem.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") openAppearance(e);
+    });
+    page3.querySelector("#pm-theme-back").addEventListener("click", function () {
+      setView("1");
+      appItem.focus({ preventScroll: true });
+    });
+  }
+
+  // Mobile menu: a segmented control above the bottom button.
+  var mobileMenu = document.getElementById("mobile-menu");
+  if (mobileMenu) {
+    var seg = document.createElement("div");
+    seg.className = "mobile-theme";
+    seg.setAttribute("role", "group");
+    seg.setAttribute("aria-label", "Appearance");
+    ["system", "light", "dark"].forEach(function (choice) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "mobile-theme-btn";
+      b.setAttribute("data-theme-choice", choice);
+      b.textContent = THEME_LABEL[choice];
+      b.addEventListener("click", function () { setThemeChoice(choice); });
+      mobileThemeBtns.push(b);
+      seg.appendChild(b);
+    });
+    mobileMenu.insertBefore(seg, mobileMenu.querySelector(".mobile-menu-cta"));
+  }
+
+  applyTheme();
+  window.LibrariesTheme = { get: themeChoice, set: setThemeChoice };
 
   /* ── ⌘K command palette ──────────────────────────────────── */
   var PAGES = [

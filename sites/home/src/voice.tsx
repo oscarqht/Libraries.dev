@@ -1,5 +1,6 @@
 import { StrictMode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { useSiteTheme } from "./useSiteTheme";
 import { VoiceBeam, useMicrophone, type VoiceBeamType } from "voice-glow";
 import { ChatInputMock } from "./examples/beam-mocks";
 import { PhoneScreen, DEMO_TRANSCRIPT, demoLevel, demoGetter, MIC_STATUS } from "./examples/voice-mocks";
@@ -140,8 +141,9 @@ function useDemoTranscript() {
    so the glow layers measure the real screen. */
 function PhoneExample() {
   const { transcript, runKey, onLevel } = useDemoTranscript();
+  const theme = useSiteTheme();
   return (
-    <VoiceBeam type="mobile" level={phoneGetter} theme="dark" onLevel={onLevel} scale={PHONE_SCALE} borderRadius={PHONE_RADIUS} className="mock-phone-host">
+    <VoiceBeam type="mobile" level={phoneGetter} theme={theme} onLevel={onLevel} scale={PHONE_SCALE} borderRadius={PHONE_RADIUS} className="mock-phone-host">
       <div className="mock-phone-scale">
         <div className="mock-phone-scale-inner">
           <PhoneScreen promptKey={runKey} transcript={transcript} />
@@ -153,9 +155,10 @@ function PhoneExample() {
 
 function ChatExample() {
   const [ref, scale] = useFitScale();
+  const theme = useSiteTheme();
   return (
     <div ref={ref} className="voice-fit">
-      <VoiceBeam type="default" level={demoGetter} theme="dark" scale={scale}>
+      <VoiceBeam type="default" level={demoGetter} theme={theme} scale={scale}>
         <ChatInputMock />
       </VoiceBeam>
     </div>
@@ -163,6 +166,7 @@ function ChatExample() {
 }
 
 function VoicePlayground() {
+  const pgTheme = useSiteTheme();
   const [type, setType] = useState<PageType>("default");
   const [source, setSource] = useState<Source>("demo");
   /* Pause holds the effect where it is (the library's `paused`); the
@@ -220,7 +224,7 @@ function VoicePlayground() {
   const [fitRef, fitScale] = useFitScale();
   const beam =
     type === "mobile" ? (
-      <VoiceBeam type="mobile" stream={stream} level={level} theme="dark" paused={paused} onLevel={onLevel} scale={PHONE_SCALE} borderRadius={PHONE_RADIUS} className="mock-phone-host">
+      <VoiceBeam type="mobile" stream={stream} level={level} theme={pgTheme} paused={paused} onLevel={onLevel} scale={PHONE_SCALE} borderRadius={PHONE_RADIUS} className="mock-phone-host">
         <div className="mock-phone-scale">
           <div className="mock-phone-scale-inner">
             <PhoneScreen promptKey={runKey} transcript={transcript} />
@@ -229,7 +233,7 @@ function VoicePlayground() {
       </VoiceBeam>
     ) : (
       <div ref={fitRef} className="voice-fit">
-        <VoiceBeam type="default" stream={stream} level={level} theme="dark" paused={paused} onLevel={onLevel} scale={fitScale}>
+        <VoiceBeam type="default" stream={stream} level={level} theme={pgTheme} paused={paused} onLevel={onLevel} scale={fitScale}>
           <ChatInputMock />
         </VoiceBeam>
       </div>

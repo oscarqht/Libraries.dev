@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <!-- Theme. A stored choice (the Appearance item in the More menu) wins,
+       otherwise the OS setting. Runs before anything paints, so a page never
+       flashes the other theme. site.js keeps it in sync afterwards. -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <!-- First-paint guard. Firefox has painted a frame before the stylesheets
@@ -18,9 +31,10 @@
        regardless, so a failed sheet can never leave the page blank. -->
   <style>
     html { background: #121212; }
+    html[data-theme="light"] { background: #fdfdfd; }
     html:not(.css-ready) body { visibility: hidden; }
   </style>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="dark light" />
 
   <title>Voice Glow: audio-reactive voice visualizer for React | Libraries.dev</title>
   <meta
@@ -128,6 +142,9 @@
       background: linear-gradient(to bottom, rgba(27, 27, 27, 0) 12px, #1b1b1b 159px);
       -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 69px);
       mask-image: linear-gradient(to bottom, transparent 0, #000 69px);
+    }
+    html[data-theme="light"] #playground .pg-teaser-scrim {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 12px, var(--pg-panel-bg) 159px);
     }
     /* The phone row: the crop is flush with the top edge (its -48px
        margin eats the row's top padding) and the row grows to leave 40px

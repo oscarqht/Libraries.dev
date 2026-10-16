@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <!-- Theme. A stored choice (the Appearance item in the More menu) wins,
+       otherwise the OS setting. Runs before anything paints, so a page never
+       flashes the other theme. site.js keeps it in sync afterwards. -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <!-- First-paint guard. Firefox has painted a frame before the stylesheets
@@ -18,9 +31,10 @@
        regardless, so a failed sheet can never leave the page blank. -->
   <style>
     html { background: #121212; }
+    html[data-theme="light"] { background: #fdfdfd; }
     html:not(.css-ready) body { visibility: hidden; }
   </style>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="dark light" />
 
   <title>Libraries.dev: High-crafted UI libraries for AI agents</title>
   <meta
@@ -128,15 +142,20 @@
     .hero-badge {
       position: relative; z-index: 6;
       display: inline-flex; align-items: center; height: 28px; padding: 0 12px;
-      border-radius: 24px; background: #181818;
-      font-size: 13px; font-weight: 400; line-height: 24.2px; color: #b5b5b5;
+      border-radius: 24px; background: var(--card-bg);
+      font-size: 13px; font-weight: 400; line-height: 24.2px; color: #4a4a4a;
+      box-shadow: var(--card-shadow), inset 0 0 0 1px rgba(0, 0, 0, 0.07);
+      margin-bottom: 12px;
+    }
+    .hero-badge-dim { color: #8f8f8f; margin-left: 4px; }
+    html[data-theme="dark"] .hero-badge {
+      background: #181818; color: #b5b5b5;
       box-shadow:
         0 1px 3px 0 rgba(0, 0, 0, 0.04),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.02),
         inset 0 0 0 1px rgba(196, 196, 196, 0.05);
-      margin-bottom: 12px;
     }
-    .hero-badge-dim { color: #939393; margin-left: 4px; }
+    html[data-theme="dark"] .hero-badge-dim { color: #939393; }
     /* Figma type: Saans 42/45, -0.21px, #fefefe, wrapping at 409px;
        subtitle 16/24.2 #9e9e9e single line; stack gaps 12/12/20. */
     .header .title {
@@ -144,10 +163,12 @@
       font-size: 42px;
       line-height: 45px;
       letter-spacing: -0.21px;
-      color: #fefefe;
+      color: var(--text);
       max-width: 409px;
     }
-    .header .subtitle { margin-top: 12px; max-width: 560px; color: #9e9e9e; }
+    .header .subtitle { margin-top: 12px; max-width: 560px; color: var(--text-muted); }
+    html[data-theme="dark"] .header .title { color: #fefefe; }
+    html[data-theme="dark"] .header .subtitle { color: #9e9e9e; }
     .header .skill-cta-row { margin-top: 20px; }
     /* Below ~900px the scatter's inner tiles reach into the copy's column.
        The badge already sat above them; the rest of the hero copy joins it,
@@ -171,16 +192,14 @@
        108px inner stage, hover lightens + reveals a label pill. */
     .hero-tile {
       position: absolute; width: 130px; height: 130px; display: block;
-      border-radius: 24px; background: #181818; text-decoration: none;
+      border-radius: 24px; background: var(--card-bg); text-decoration: none;
       /* The gallery card's surface, to the value — the tiles sat a shade
          brighter on the last ring (0.1 against 0.07), which read as a
          different material at a glance. */
       box-shadow:
-        0 1px 3px 0 rgba(0, 0, 0, 0.04),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
-        inset 0 0 0 1px rgba(0, 0, 0, 0.06),
-        inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
-        inset 0 0 0 1px rgba(196, 196, 196, 0.07);
+        var(--card-shadow),
+        inset 0 0 0 1px var(--card-border),
+        inset 0 -1px 0 0 var(--card-border);
       /* Drag offset lives in vars, not an inline transform, so the hover
          lift below can compose with a dropped tile's position instead of
          being shadowed by it. */
@@ -204,9 +223,20 @@
        and --ease-bounce-strong, so it's spelled out rather than tokenised.
        The three vars are what the dev-only motion tuner writes to (see the
        bottom of this file); the fallbacks are the shipped values. */
+    html[data-theme="dark"] .hero-tile {
+      background: #181818;
+      box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
+        inset 0 0 0 1px rgba(196, 196, 196, 0.07);
+    }
+    html[data-theme="dark"] .hero-tile:hover,
+    html[data-theme="dark"] .hero-tile:focus-visible { background: #1c1c1c; }
     .hero-tile:hover,
     .hero-tile:focus-visible {
-      background: #1c1c1c;
+      background: color-mix(in srgb, var(--card-bg) 98%, #000 2%);
       transform: translate(
         var(--drag-x, 0px),
         calc(var(--drag-y, 0px) - var(--tile-lift-y, 6px))
@@ -246,8 +276,11 @@
     .hero-tile-video { width: 100%; height: 100%; object-fit: cover; display: block; }
     .hero-tile-stage::after {
       content: ""; position: absolute; inset: 0; border-radius: inherit;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), inset 0 0 0 1px rgba(191, 192, 203, 0.1);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
       pointer-events: none; z-index: 10;
+    }
+    html[data-theme="dark"] .hero-tile-stage::after {
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02), inset 0 0 0 1px rgba(191, 192, 203, 0.1);
     }
     /* The pill opens like a dropdown from the bottom edge of its tile —
        the menu-dropdown recipe's scale-from-origin, on hover instead of a
@@ -256,15 +289,10 @@
     .hero-tile-pill {
       position: absolute; top: calc(100% + 12px); left: 50%;
       display: inline-flex; align-items: center; gap: 2px; height: 28px;
-      padding: 0 6px 0 12px; border-radius: 24px; background: #2a2a2a;
-      font-size: 12px; font-weight: 500; line-height: 13px; color: #e8e8e8;
+      padding: 0 6px 0 12px; border-radius: 24px; background: var(--material-bg);
+      font-size: 12px; font-weight: 500; line-height: 13px; color: var(--text);
       white-space: nowrap;
-      box-shadow:
-        0 1px 3px 0 rgba(0, 0, 0, 0.04),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
-        inset 0 0 0 1px rgba(0, 0, 0, 0.06),
-        inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
-        inset 0 0 0 1px rgba(196, 196, 196, 0.1);
+      box-shadow: var(--material-shadow);
       /* translateX carries the centring, so it has to ride along in every
          transform the scale is written into. */
       transform: translateX(-50%) scale(var(--dropdown-pre-scale));
@@ -280,7 +308,17 @@
         translate 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
       will-change: transform, opacity;
     }
-    .hero-tile-pill svg { width: 16px; height: 16px; display: block; color: #9a9a9a; transform: rotate(-90deg); }
+    .hero-tile-pill svg { width: 16px; height: 16px; display: block; color: var(--text-faint); transform: rotate(-90deg); }
+    html[data-theme="dark"] .hero-tile-pill {
+      background: #2a2a2a; color: #e8e8e8;
+      box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
+        inset 0 0 0 1px rgba(196, 196, 196, 0.1);
+    }
+    html[data-theme="dark"] .hero-tile-pill svg { color: #9a9a9a; }
     .hero-tile:hover .hero-tile-pill,
     .hero-tile:focus-visible .hero-tile-pill {
       transform: translateX(-50%) scale(1);
@@ -441,7 +479,8 @@
     .lib-ico { flex: none; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 12px; overflow: hidden; }
     .lib-ico img { width: 46px; height: 46px; display: block; }
     .lib-meta-text { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
-    .lib-name { font-size: 14px; font-weight: 500; line-height: 13px; color: #ededed; }
+    .lib-name { font-size: 14px; font-weight: 500; line-height: 13px; color: var(--text); }
+    html[data-theme="dark"] .lib-name { color: #ededed; }
     .lib-desc {
       font-size: 14px; font-weight: 400; line-height: 13px; color: #767676;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -526,26 +565,28 @@
       width: 14px;
       height: 14px;
       display: block;
-      color: rgba(255, 255, 255, 0.22);
+      color: rgba(0, 0, 0, 0.18);
       text-decoration: none;
       transition: color 150ms ease;
     }
     .pro-quote-x svg { width: 100%; height: 100%; display: block; }
     /* The quote never runs under the mark. */
     .pro-quote-text { padding-right: 28px; }
-    a.pro-quote-x:hover { color: rgba(255, 255, 255, 0.6); }
-    html[data-theme="light"] .pro-quote-x { color: rgba(0, 0, 0, 0.18); }
-    html[data-theme="light"] a.pro-quote-x:hover { color: rgba(0, 0, 0, 0.55); }
-    .pro-quote-text { margin: 0; flex: 1 1 auto; font-size: 16px; line-height: 24.2px; color: #c9c9c9; overflow-wrap: anywhere; }
+    a.pro-quote-x:hover { color: rgba(0, 0, 0, 0.55); }
+    html[data-theme="dark"] .pro-quote-x { color: rgba(255, 255, 255, 0.22); }
+    html[data-theme="dark"] a.pro-quote-x:hover { color: rgba(255, 255, 255, 0.6); }
+    .pro-quote-text { margin: 0; flex: 1 1 auto; font-size: 16px; line-height: 24.2px; color: #3a3a3a; overflow-wrap: anywhere; }
+    html[data-theme="dark"] .pro-quote-text { color: #c9c9c9; }
     .pro-quote-author { display: flex; align-items: center; gap: 11px; min-width: 0; }
     .pro-quote-avatar-link { flex: none; display: inline-flex; border-radius: 50px; text-decoration: none; transition: opacity 150ms var(--ease-smooth-out); }
     .pro-quote-avatar-link:hover { opacity: 0.85; }
     .pro-quote-avatar {
       flex: none; width: 36px; height: 36px; border-radius: 50px;
       display: inline-flex; align-items: center; justify-content: center;
-      background: rgba(255, 255, 255, 0.06); color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.05); color: var(--text-muted);
       font-size: 13px; font-weight: 500; overflow: hidden;
     }
+    html[data-theme="dark"] .pro-quote-avatar { background: rgba(255, 255, 255, 0.06); }
     /* Real photo when one is installed; the initial stays underneath as the
        fallback, and a missing file drops the img so the initial shows. */
     .pro-quote-avatar { position: relative; }
@@ -554,7 +595,8 @@
       object-fit: cover; border-radius: inherit; display: block;
     }
     .pro-quote-id { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .pro-quote-name { align-self: flex-start; font-size: 13px; line-height: 16px; font-weight: 500; color: #ededed; text-decoration: none; }
+    .pro-quote-name { align-self: flex-start; font-size: 13px; line-height: 16px; font-weight: 500; color: var(--text); text-decoration: none; }
+    html[data-theme="dark"] .pro-quote-name { color: #ededed; }
     /* Only the ones that link out are underlined; a plain name is not a link. */
     /* A name in a byline is not a link inside a sentence: no underline at
        rest, so it does not compete with the quote. It still appears on
@@ -635,7 +677,8 @@
       opacity: 0.2;
       z-index: -1;
     }
-    .howto-step-title { margin: 0; font-size: 15px; font-weight: 500; line-height: 20px; color: #ededed; }
+    .howto-step-title { margin: 0; font-size: 15px; font-weight: 500; line-height: 20px; color: var(--text); }
+    html[data-theme="dark"] .howto-step-title { color: #ededed; }
     .howto-step-text { margin: 0; font-size: 14px; line-height: 22px; color: var(--text-muted); overflow-wrap: anywhere; }
     .howto-step-text code {
       font-family: var(--font-mono);
@@ -659,9 +702,10 @@
     /* ── FAQ accordion (styling from transitions.dev/pro) ───────── */
     .faq-list {
       --acc-expand: 250ms; --acc-collapse: 250ms; --acc-chevron: 250ms;
-      --acc-ease: var(--ease-smooth-out); --faq-border: rgba(255, 255, 255, 0.08);
+      --acc-ease: var(--ease-smooth-out); --faq-border: rgba(0, 0, 0, 0.08);
       display: flex; flex-direction: column; max-width: 640px; margin: 0 auto;
     }
+    html[data-theme="dark"] .faq-list { --faq-border: rgba(255, 255, 255, 0.08); }
     .t-acc { border-top: 1px solid var(--faq-border); }
     .faq-list .t-acc:last-child { border-bottom: 1px solid var(--faq-border); }
     .t-acc-head {
@@ -727,7 +771,15 @@
       color: #ffffff;
     }
     .skill-cta-row .skill-btn.skill-btn--primary {
+      background: var(--chip-bg);
+      color: var(--text);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+    }
+    .skill-cta-row .skill-btn.skill-btn--primary:hover { background: var(--chip-bg-pressed); }
+    .skill-cta-row .skill-btn.skill-btn--primary:active { background: #e3e2e2; }
+    html[data-theme="dark"] .skill-cta-row .skill-btn.skill-btn--primary {
       background: #2a2a2a;
+      color: #ffffff;
       box-shadow:
         0 1px 3px 0 rgba(0, 0, 0, 0.04),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
@@ -735,8 +787,8 @@
         inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
         inset 0 0 0 1px rgba(196, 196, 196, 0.1);
     }
-    .skill-cta-row .skill-btn.skill-btn--primary:hover { background: #323232; }
-    .skill-cta-row .skill-btn.skill-btn--primary:active { background: #262626; }
+    html[data-theme="dark"] .skill-cta-row .skill-btn.skill-btn--primary:hover { background: #323232; }
+    html[data-theme="dark"] .skill-cta-row .skill-btn.skill-btn--primary:active { background: #262626; }
     .skill-cta-row .skill-btn.skill-btn--secondary {
       background: #0071fc;
       box-shadow:

@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <!-- Theme. A stored choice (the Appearance item in the More menu) wins,
+       otherwise the OS setting. Runs before anything paints, so a page never
+       flashes the other theme. site.js keeps it in sync afterwards. -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <!-- First-paint guard. Firefox has painted a frame before the stylesheets
@@ -24,10 +37,11 @@
        regardless, so a failed sheet can never leave the page blank. -->
   <style>
     html { background: #121212; }
+    html[data-theme="light"] { background: #fdfdfd; }
     html:not(.css-ready) body { visibility: hidden; }
   </style>
   <script>document.documentElement.classList.add("css-ready");</script>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="dark light" />
 
   <title>You're all set · Libraries.dev</title>
   <meta name="description" content="Thanks for getting Libraries Pro. Open the Studio to customize every library, or browse the libraries and install them from npm." />
@@ -3975,6 +3989,18 @@
         }
         .header .skill-cta-row .skill-btn.skill-btn--secondary:hover { background: #323232; }
         .header .skill-cta-row .skill-btn.skill-btn--secondary:active { background: #262626; }
+        /* Light: Browse sits on the light grey chip with dark ink, the
+           same pair the homepage hero uses in light. */
+        html:not([data-theme="dark"]) .header .skill-cta-row .skill-btn.skill-btn--secondary {
+          background: #f4f4f4;
+          color: #17181c;
+          box-shadow:
+            0 1px 3px 0 rgba(0, 0, 0, 0.04),
+            inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+            inset 0 -1px 0 0 rgba(0, 0, 0, 0.06);
+        }
+        html:not([data-theme="dark"]) .header .skill-cta-row .skill-btn.skill-btn--secondary:hover { background: #ececec; }
+        html:not([data-theme="dark"]) .header .skill-cta-row .skill-btn.skill-btn--secondary:active { background: #e0e0e0; }
         .success-signin { margin: 16px 0 0; max-width: 460px; font-size: 14px; line-height: 1.5; color: var(--text-muted); text-align: center; }
         .success-signin[hidden] { display: none; }
         .success-signin strong { color: var(--text); font-weight: 600; }

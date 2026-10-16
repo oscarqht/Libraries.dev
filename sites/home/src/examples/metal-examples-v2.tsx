@@ -6,6 +6,7 @@ import {
   useMetalBend,
 } from "metal-fx";
 import { MAC_ARROW, isMacPointer } from "./metal-cursor-sprite";
+import { useSiteTheme } from "../useSiteTheme";
 
 /* Metal v2 examples — two of the metal-fx v2 demo page's cards, on the
    site's mx-* classes. Same presets, strengths and per-card settings as the
@@ -54,6 +55,7 @@ export function useMetalCursorSprite(): void {
 }
 
 export function MetalExamplesV2({ strength = 1 }: { strength?: number }) {
+  const theme = useSiteTheme();
   const autoChipRef = useRef<HTMLDivElement>(null);
   const sendRef = useRef<HTMLDivElement>(null);
   useMetalBend(sendRef);
@@ -88,7 +90,7 @@ export function MetalExamplesV2({ strength = 1 }: { strength?: number }) {
               ref={sendRef}
               preset="chromatic"
               variant="circle"
-              theme="dark"
+              theme={theme}
               reflectionTargets={[autoChipRef]}
               innerShadow
               strength={strength * 0.9}
@@ -105,7 +107,7 @@ export function MetalExamplesV2({ strength = 1 }: { strength?: number }) {
       <div className="example-row-full mx-row mx-row--card">
         <div className="mx-card-line mx-card-line--live">
           <span className="mx-live">Live mode</span>
-          <MetalBadge strength={strength} theme="dark">New</MetalBadge>
+          <MetalBadge strength={strength} theme={theme}>New</MetalBadge>
         </div>
       </div>
     </div>

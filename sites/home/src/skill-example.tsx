@@ -3,6 +3,7 @@ import { BorderBeam } from "border-beam";
 import { MetalBadge } from "metal-fx";
 import { ThinkingOrb } from "thinking-orbs";
 import { BotAvatar } from "bot-avatars";
+import { useSiteTheme } from "./useSiteTheme";
 
 /* The skill page's hero compare: prototypes from the skill demo page
    (skill-demo.html, Figma 1635:1035) — a prompt input, a "New" badge, a
@@ -37,27 +38,34 @@ function AgentText() {
 }
 
 function WithSkill() {
+  /* Follows the embedding page: the head script reads the same stored
+     theme, and a storage listener keeps data-theme in sync with it. */
+  const theme = useSiteTheme();
   return (
     <div className="sx-card">
       <div className="sx-col">
-        <BorderBeam size="md" theme="dark" className="sd-beam">
+        <BorderBeam size="md" theme={theme} className="sd-beam">
           <PromptForm />
         </BorderBeam>
         <div className="sd-studio">
           <span className="sd-studio-label">Studio app</span>
           {/* 0.88 × the Figma's 45×25 badge: 22px tall. */}
-          <MetalBadge theme="dark" scale={0.88}>New</MetalBadge>
+          {/* The wrapper adds a hairline in light, where the white pill
+              would otherwise sit flush on the white card. */}
+          <span className="sd-metal-badge">
+            <MetalBadge theme={theme} scale={0.88}>New</MetalBadge>
+          </span>
         </div>
-        <BorderBeam size="pulse-inner" theme="dark" strength={0.8} className="sd-beam">
+        <BorderBeam size="pulse-inner" theme={theme} strength={0.8} className="sd-beam">
           <button type="button" className="sd-btn">Get Pro</button>
         </BorderBeam>
         <div className="sd-status">
           {/* Sizes are 64 / 32 / 20 presets; the 32 drawn at 24px stays crisp. */}
-          <ThinkingOrb state="connecting" size={32} theme="dark" style={{ width: 24, height: 24 }} />
+          <ThinkingOrb state="connecting" size={32} theme={theme} style={{ width: 24, height: 24 }} />
           <span className="t-shimmer" data-text="Planning next steps">Planning next steps</span>
         </div>
         <div className="sd-agent">
-          <BotAvatar type="triangle" state="default" size={48} theme="dark" />
+          <BotAvatar type="triangle" state="default" size={48} theme={theme} />
           <AgentText />
         </div>
       </div>

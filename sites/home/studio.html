@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <!-- Theme. A stored choice (the Appearance item in the More menu) wins,
+       otherwise the OS setting. Runs before anything paints, so a page never
+       flashes the other theme. site.js keeps it in sync afterwards. -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <!-- First-paint guard. Firefox has painted a frame before the stylesheets
@@ -18,9 +31,10 @@
        regardless, so a failed sheet can never leave the page blank. -->
   <style>
     html { background: #121212; }
+    html[data-theme="light"] { background: #fdfdfd; }
     html:not(.css-ready) body { visibility: hidden; }
   </style>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="dark light" />
 
   <title>Studio: tune every library live with AI | Libraries.dev</title>
   <meta name="description" content="The Studio: tune every option of all seven Libraries.dev effects live, with a built-in AI agent, then copy the exact code. Part of Libraries Pro." />
@@ -112,14 +126,18 @@
       height: 22px;
       padding: 0 8px;
       border-radius: 50px;
-      background: rgba(85, 207, 255, 0.14);
-      color: #7cd4ff;
+      background: var(--pro-tint-bg);
+      color: var(--pro-tint-ink);
       font-size: 13px;
       font-weight: 500;
       line-height: 16px;
       /* The raised-surface ring every card and pill here wears, so the chip
          sits on the same material instead of reading as a flat wash. */
       box-shadow: var(--material-shadow);
+    }
+    html[data-theme="dark"] .studio-eyebrow-chip {
+      background: rgba(85, 207, 255, 0.14);
+      color: #7cd4ff;
     }
     .studio-hero-title {
       margin: 0;
@@ -237,6 +255,9 @@
       background: #1b1b1b;
     }
     .studio-live--status .st-chat-thinking { position: absolute; left: 8px; top: 6px; }
+    /* The screenshots are the dark app in either page theme, so the live
+       status line keeps the dark app's shimmer inks on them. */
+    html[data-theme="light"] .studio-live--status .st-chat-thinking { --think-base: #9a9a9a; --think-highlight: #f5f5f5; }
     .studio-live--beam {
       left: 1px; top: 195px; width: 111px; height: 106px;
       background: #171717;
@@ -298,8 +319,11 @@
       font-size: 16px;
       font-weight: 500;
       line-height: 24.2px;
-      color: #f5f5f5;
+      color: var(--text);
     }
+    html[data-theme="dark"] .studio-feature-title { color: #f5f5f5; }
+    /* The feature marks are drawn in #eeeeee for the dark page. */
+    html[data-theme="light"] .studio-feature-icon { filter: invert(1); opacity: 0.8; }
     .studio-feature-text {
       margin: 0;
       font-size: 14px;
@@ -319,9 +343,10 @@
     /* FAQ accordion (styling from transitions.dev/pro — same as home). */
     .faq-list {
       --acc-expand: 250ms; --acc-collapse: 250ms; --acc-chevron: 250ms;
-      --acc-ease: var(--ease-smooth-out); --faq-border: rgba(255, 255, 255, 0.08);
+      --acc-ease: var(--ease-smooth-out); --faq-border: rgba(0, 0, 0, 0.08);
       display: flex; flex-direction: column; max-width: 640px; margin: 0 auto;
     }
+    html[data-theme="dark"] .faq-list { --faq-border: rgba(255, 255, 255, 0.08); }
     .t-acc { border-top: 1px solid var(--faq-border); }
     .faq-list .t-acc:last-child { border-bottom: 1px solid var(--faq-border); }
     .t-acc-head {

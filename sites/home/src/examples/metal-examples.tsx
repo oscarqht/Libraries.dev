@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { MetalFx } from "metal-fx-v1";
+import { useSiteTheme } from "../useSiteTheme";
 
 /* The metal-fx demo page's own examples (demo/components/Examples.tsx),
    ported from its Tailwind to the mx-* classes in assets/examples.css.
@@ -55,6 +56,7 @@ function DotsIcon() {
 }
 
 export function MetalExamples({ strength = 1 }: { strength?: number }) {
+  const theme = useSiteTheme();
   const searchRef = useRef<HTMLLabelElement>(null);
   const dotsRef = useRef<HTMLButtonElement>(null);
   const autoChipRef = useRef<HTMLDivElement>(null);
@@ -87,7 +89,7 @@ export function MetalExamples({ strength = 1 }: { strength?: number }) {
             <MetalFx
               preset="gold"
               variant="circle"
-              theme="dark"
+              theme={theme}
               reflectionTargets={[autoChipRef]}
               /* Demo baseline: the circle peaks at 90% so the gold rim
                  does not fully saturate; the chromatic pill uses 0.7. */
@@ -121,7 +123,7 @@ export function MetalExamples({ strength = 1 }: { strength?: number }) {
 
           <MetalFx
             preset="chromatic"
-            theme="dark"
+            theme={theme}
             reflectionTargets={[searchRef, dotsRef]}
             strength={strength * 0.7}
           >

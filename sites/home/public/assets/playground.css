@@ -431,6 +431,15 @@ html[data-theme="dark"] .detail-tabs.proto-modal-tabs {
 .detail-studio:hover { background: rgba(255, 255, 255, 0.1); }
 .detail-studio:active { background: rgba(255, 255, 255, 0.12); }
 .detail-studio:focus-visible { outline: 2px solid var(--text-muted); outline-offset: 2px; }
+/* Light: the white raised pill Copy prompt wears, so the rim wash reads
+   as the only difference between the two. */
+html[data-theme="light"] .detail-studio {
+  background: var(--pg-control-active-bg);
+  color: var(--pg-control-active-text);
+  box-shadow: var(--pg-control-active-shadow);
+}
+html[data-theme="light"] .detail-studio:hover { background: #fafafa; }
+html[data-theme="light"] .detail-studio:active { background: #f1f1f1; }
 .detail-studio svg,
 .detail-studio img { position: relative; z-index: 1; width: 16px; height: 16px; display: block; flex: none; }
 
@@ -975,6 +984,18 @@ html[data-theme="light"] .st-preset-save:active { background: #fafafa; }
   padding: 0 14px;
 }
 
+/* Light teaser: the scrim fades into the white panel, the pitch takes the
+   panel's ink, and the locked replica's chrome follows the light tokens. */
+html[data-theme="light"] .pg-teaser-scrim {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 5%, var(--pg-panel-bg) 69%);
+}
+html[data-theme="light"] .pg-teaser-title { color: var(--pg-title); }
+html[data-theme="light"] .pg-teaser-sub { color: var(--pg-label); }
+html[data-theme="light"] .pg-teaser-sep { background: var(--pg-rule); }
+html[data-theme="light"] .pg-teaser-locked .pg-vslider:hover { background: var(--pg-control-bg); }
+/* The "Playground" label above the stage (examples.css paints it #fbfbfb). */
+html[data-theme="light"] .detail-playground-label { color: var(--text); }
+
 /* Section headings — still used by the code panels */
 .detail-section { margin-top: 0; width: 100%; }
 .detail-section-title { font-size: 15px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
@@ -1018,6 +1039,14 @@ html[data-theme="light"] .st-preset-save:active { background: #fafafa; }
   overflow: hidden;
 }
 html[data-theme="dark"] .pg-stage { background: #171717; }
+/* Beam playground's demo card (base rules inline in beam.html are the dark
+   card): in light it is the Studio's white card on a hairline ring. */
+html[data-theme="light"] .pg-stage .beam-card { background: #ffffff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08); }
+html[data-theme="light"] .pg-stage .beam-card-line { background: rgba(0, 0, 0, 0.07); }
+html[data-theme="light"] .pg-stage .beam-card-line--title { background: rgba(0, 0, 0, 0.12); }
+/* Metal playground's Text type: the muted "Plan" beside the metal "Pro"
+   (examples.css only lightens it inside .detail-examples). */
+html[data-theme="light"] .pg-stage .mx-plan { color: rgba(13, 13, 13, 0.45); }
 
 /* ── Studio control tokens ────────────────────────────────────
    Light values follow transitions.dev's page palette (--bg / --card-bg

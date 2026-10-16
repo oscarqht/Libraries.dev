@@ -1,8 +1,9 @@
 /* ============================================================ */
-/* Libraries.dev — shared design system (dark-only)             */
-/* Ported from transitions.dev. The site ships with             */
-/* <html data-theme="dark"> hardcoded, so the dark override     */
-/* blocks below always apply.                                   */
+/* Libraries.dev — shared design system (light + dark)          */
+/* Ported from transitions.dev. :root holds the light theme;    */
+/* html[data-theme="dark"] blocks override it. data-theme is    */
+/* set before first paint by the inline script in each page's   */
+/* <head> (stored choice, else the OS setting).                 */
 /* ============================================================ */
 :root {
   color-scheme: light;
@@ -576,7 +577,7 @@ html[data-theme="dark"] .nav-pill--active { background: rgba(255, 255, 255, 0.06
   position: fixed;
   inset: 0;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(253, 253, 253, 0.95);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   opacity: 0;
@@ -713,6 +714,55 @@ body.menu-closing .mobile-menu-cta {
 }
 body.menu-open { overflow: hidden; }
 
+/* Appearance switch in the mobile menu, above the bottom button. */
+.mobile-theme {
+  margin-top: auto;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 26px;
+  background: #f5f5f5;
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(3px);
+}
+html[data-theme="dark"] .mobile-theme { background: rgba(255, 255, 255, 0.06); }
+.mobile-theme + .mobile-menu-cta { margin-top: 12px; }
+.mobile-theme-btn {
+  flex: 1;
+  height: 38px;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.mobile-theme-btn[aria-pressed="true"] {
+  background: #ffffff;
+  color: var(--text);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+html[data-theme="dark"] .mobile-theme-btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.1); box-shadow: none; }
+body.menu-open .mobile-theme {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1) 120ms,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 120ms,
+    filter 0.5s cubic-bezier(0.22, 1, 0.36, 1) 120ms;
+}
+body.menu-closing .mobile-theme { opacity: 0; transition: opacity 0.2s ease; }
+
+/* Theme swap: site.js sets this for one frame so the page changes at once
+   rather than every colour transition running together. */
+html.theme-switching *, html.theme-switching *::before, html.theme-switching *::after { transition: none !important; }
+
 @media (prefers-reduced-motion: reduce) {
   .nav-burger-line,
   .mobile-menu-backdrop,
@@ -801,20 +851,25 @@ html[data-theme="dark"] .tl-menu-check { color: #fbfbfb; }
   --page-slide-ease: cubic-bezier(0.22, 1, 0.36, 1); --page-fade-ease: cubic-bezier(0.22, 1, 0.36, 1);
   transition: height var(--page-slide-dur) var(--page-slide-ease); }
 .tl-set-slide .t-page[data-page-id="1"] { --t-page-from-x: calc(var(--page-slide-distance) * -1); }
-.tl-set-slide .t-page[data-page-id="2"] { --t-page-from-x: var(--page-slide-distance); }
+.tl-set-slide .t-page[data-page-id="2"],
+.tl-set-slide .t-page[data-page-id="3"] { --t-page-from-x: var(--page-slide-distance); }
 .tl-set-slide .t-page { position: absolute; top: 0; left: 0; right: 0; box-sizing: border-box;
   padding-left: 6px; padding-right: 6px; opacity: 0; pointer-events: none;
   transform: translateX(var(--t-page-from-x, 0px)); filter: blur(var(--page-blur));
   transition: opacity var(--page-fade-dur) var(--page-fade-ease), transform var(--page-slide-dur) var(--page-slide-ease), filter var(--page-slide-dur) var(--page-slide-ease);
   will-change: opacity, transform, filter; }
 .tl-set-slide[data-page="1"] .t-page[data-page-id="1"],
-.tl-set-slide[data-page="2"] .t-page[data-page-id="2"] {
+.tl-set-slide[data-page="2"] .t-page[data-page-id="2"],
+.tl-set-slide[data-page="3"] .t-page[data-page-id="3"] {
   opacity: 1; transform: translateX(0); filter: blur(0); }
 /* Only an open menu's page takes the pointer: the closed menu is kept in
    the layout at opacity 0, and an active page that accepted clicks there
    swallowed whatever sat under it (the Studio panel's Agent tab). */
 .tl-menu.is-open .tl-set-slide[data-page="1"] .t-page[data-page-id="1"],
-.tl-menu.is-open .tl-set-slide[data-page="2"] .t-page[data-page-id="2"] { pointer-events: auto; }
+.tl-menu.is-open .tl-set-slide[data-page="2"] .t-page[data-page-id="2"],
+.tl-menu.is-open .tl-set-slide[data-page="3"] .t-page[data-page-id="3"] { pointer-events: auto; }
+/* Appearance page: only the chosen row shows its check. */
+.tl-menu-item[aria-checked="false"] .tl-menu-check { visibility: hidden; }
 .tl-set-back { display: flex; align-items: center; gap: 4px; width: 100%; box-sizing: border-box;
   min-height: 32px; padding: 0 8px 0 4px; border: none; background: transparent; border-radius: 8px;
   font-family: var(--font-sans); font-size: 13px; font-weight: 500; line-height: 16px; color: #1b1b1b;
@@ -1142,9 +1197,17 @@ html[data-theme="dark"] .card:hover {
    single hairline ring with a brighter top edge, and no drop shadow.
    Fill and shadow only; unlike .card they size themselves and are laid
    out by their own grid in index.html. */
-.pro-quote,
 /* The accessibility/docs statement cards wear the same quote-card material,
    so every card family on the site reads as one. */
+.pro-quote,
+.docs-card {
+  background-color: var(--card-bg);
+  box-shadow:
+    var(--card-shadow),
+    inset 0 0 0 1px var(--card-border),
+    inset 0 -1px 0 0 var(--card-border);
+}
+html[data-theme="dark"] .pro-quote,
 html[data-theme="dark"] .docs-card {
   background-color: #1a1a1a;
   box-shadow:
