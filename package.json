@@ -1,24 +1,33 @@
 {
-  "name": "@jakubantalik/libraries",
+  "name": "libraries-dev",
   "private": true,
+  "type": "module",
   "description": "Home of Jakub Antalik's libraries: border-beam, voice-glow, liquid-gooey, thinking-orbs, bot-avatars, metal-fx and img-fx.",
   "license": "MIT",
-  "workspaces": [
-    "packages/*",
-    "sites/*"
-  ],
   "scripts": {
-    "build:beam": "npm run build -w border-beam",
-    "build:gooey": "npm run build -w liquid-gooey",
-    "build:orbs": "npm run build -w thinking-orbs",
-    "build:site-beam": "npm run build:beam && npm run build -w @sites/beam",
-    "build:site-gooey": "npm run build:gooey && npm run build -w @sites/gooey",
-    "build:site-orbs": "npm run build:orbs && npm run build -w @sites/orbs",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "build:metal": "npm run build -w metal-fx",
-    "build:image": "npm run build -w img-fx",
-    "build:voice": "npm run build -w voice-glow",
-    "build:avatars": "npm run build -w bot-avatars",
-    "build:site-home": "npm run build:beam && npm run build:orbs && npm run build:gooey && npm run build:metal && npm run build:image && npm run build:voice && npm run build:avatars && npm run build -w @sites/home"
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 3000",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@paper-design/shaders": "^0.0.81",
+    "framer-motion": "^11.0.8",
+    "lucide-react": "^0.344.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^26.6.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/three": "^0.160.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3"
   }
 }

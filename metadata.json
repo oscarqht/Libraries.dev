@@ -1,0 +1,8 @@
+{
+  "name": "Libraries.dev",
+  "description": "High-crafted UI libraries for AI agents: border-beam, thinking-orbs, bot-avatars, liquid-gooey, voice-glow, metal-fx, and img-fx.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

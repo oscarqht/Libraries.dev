@@ -464,7 +464,8 @@ export function generateVoiceBeamCSS(options: GenerateVoiceStylesOptions): strin
   const Z = `var(--vb-z-${id}, 1)`;
   const zpx = (v: number) => `calc(${px(v)}px * ${Z})`;
   const isDark = theme === 'dark';
-  const paletteColors = voicePalettes[colorVariant][isDark ? 'dark' : 'light'];
+  const palette = voicePalettes[colorVariant] || voicePalettes.colorful;
+  const paletteColors = (isDark ? palette?.dark : palette?.light) || palette?.dark || voicePalettes.colorful.dark;
   // A custom palette fills the slots it names; the variant's own colour
   // stays wherever an entry is missing or unparseable.
   const colors = paletteColors.map((c, i) => {

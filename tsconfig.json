@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "baseUrl": ".",
+    "paths": {
+      "border-beam": ["packages/border-beam/src/index.ts"],
+      "thinking-orbs": ["packages/thinking-orbs/src/index.ts"],
+      "bot-avatars": ["packages/bot-avatars/src/index.ts"],
+      "liquid-gooey": ["packages/liquid-gooey/src/index.ts"],
+      "voice-glow": ["packages/voice-glow/src/index.ts"],
+      "metal-fx": ["packages/metal-fx/src/index.ts"],
+      "img-fx": ["packages/img-fx/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: dark;
+  --bg: #070707;
+  --card-bg: #101012;
+  --card-surface: #111113;
+  --stage-bg: #0c0c0e;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-main: #fbfbfb;
+  --text-muted: #8c8c8c;
+  --chip-bg: rgba(255, 255, 255, 0.06);
+  --chip-hover: rgba(255, 255, 255, 0.10);
+  --accent-blue: #0071fc;
+}
+
+html.light,
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f8f9fb;
+  --card-bg: #ffffff;
+  --card-surface: #ffffff;
+  --stage-bg: #f1f2f6;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.16);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --chip-bg: rgba(0, 0, 0, 0.05);
+  --chip-hover: rgba(0, 0, 0, 0.08);
+  --accent-blue: #0071fc;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+code, pre {
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
